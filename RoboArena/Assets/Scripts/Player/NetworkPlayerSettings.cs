@@ -11,13 +11,17 @@ public class NetworkPlayerSettings
     private int m_MaxHealth = 100;
     [SerializeField]
     private float m_MoveSpeed = 2000;
+    [SerializeField]
+    private float m_BlockingTime = 0.2f;
+    [SerializeField]
+    private float m_BlockingCooldown = 2f;
 
     [Header("Weapon Settings")]
     [SerializeField]
     private float m_WeaponCooldown = 0.4f;
     [Header("Bullet Settings")]
     [SerializeField]
-    private int m_BulletBounces = 15;
+    private int m_BulletBounces = 3;
     [SerializeField]
     private int m_BulletDamage= 5;
     [SerializeField]
@@ -26,6 +30,15 @@ public class NetworkPlayerSettings
     private bool m_BulletHasMaxTravelTime = false;
     [SerializeField]
     private float m_BulletMaxTravelTime = 10;
+
+    [SerializeField]
+    private int m_GameStartCountdown = 10;
+
+    public int GameStartCountdown
+    {
+        get => m_GameStartCountdown;
+        set => m_GameStartCountdown = value;
+    }
 
     public float WeaponCooldown
     {
@@ -73,6 +86,18 @@ public class NetworkPlayerSettings
     {
         get => m_BulletMaxTravelTime;
         set => m_BulletMaxTravelTime = value;
+    }
+
+    public float BlockingTime
+    {
+        get => m_BlockingTime;
+        set => m_BlockingTime = value;
+    }
+
+    public float BlockingCooldown
+    {
+        get => m_BlockingCooldown;
+        set => m_BlockingCooldown = value;
     }
 
 }

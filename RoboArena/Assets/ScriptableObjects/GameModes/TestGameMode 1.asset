@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2398d2a8c0970aa4c821ac991af5f98f, type: 3}
-  m_Name: TestGameMode
+  m_Name: TestGameMode 1
   m_EditorClassIdentifier: 
   m_PlayerSettings:
     m_MaxHealth: 100
@@ -24,4 +24,4 @@ MonoBehaviour:
     m_BulletHasMaxTravelTime: 1
     m_BulletMaxTravelTime: 10
     m_GameStartCountdown: 10
-  m_ModeName: TestMode_1
+  m_ModeName: TestMode_0

@@ -11,7 +11,10 @@ public static class NetworkPlayerExtensions
                               settings.BulletBounces,
                               settings.BulletSpeed,
                               settings.BulletHasMaxTravelTime,
-                              settings.BulletMaxTravelTime
+                              settings.BulletMaxTravelTime,
+                              settings.BlockingCooldown,
+                              settings.BlockingTime,
+                              settings.GameStartCountdown
                              );
     }
 

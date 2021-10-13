@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Button m_StartGameButton;
     [SerializeField]
-    private Button m_DisconnectButton;
+    private Button[] m_DisconnectButtons;
 
     [SerializeField]
     private int m_StartGameAtPlayerCount = -1;
@@ -32,12 +32,13 @@ public class GameManager : MonoBehaviour
 
     public bool IsRunning { get; private set; }
     [SerializeField]
-    private GameSettings m_Settings;
+    private string m_MapName;
+    [SerializeField]
+    private GameLogic m_GameMode;
 
     [SerializeField]
     private GameManagerMapData[] m_Maps;
 
-    public GameSettings Settings => m_Settings;
 
     public int StartGameAtPlayerCount
     {
@@ -53,6 +54,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        m_GameMode = ArenaSceneData.Instance.GameMode;
         m_CloseIfEmpty = ArenaSceneData.Instance.CloseIfEmpty;
         m_StartGameAtPlayerCount = ArenaSceneData.Instance.StartGameAtPlayerCount;
         RoboArenaNetworkManager mgr = GetComponent < RoboArenaNetworkManager >();
@@ -60,6 +62,7 @@ public class GameManager : MonoBehaviour
         mgr.OnDisconnectServer+= OnClientDisconnected;
         mgr.networkAddress = ArenaSceneData.Instance.HostName;
         mgr.Transport.Port = ArenaSceneData.Instance.HostPort;
+        m_MapName = ArenaSceneData.Instance.MapName;
 
         if ( m_ServerDebugInfo != null )
         {
@@ -74,9 +77,15 @@ public class GameManager : MonoBehaviour
                     m_StartGameButton.gameObject.SetActive(true);
                 }
 
-                if ( m_DisconnectButton != null )
+                foreach ( Button disconnectButton in m_DisconnectButtons )
                 {
-                    m_DisconnectButton.onClick.AddListener( () => mgr.StopServer() );
+                    disconnectButton.onClick.AddListener(
+                                                         () =>
+                                                         {
+                                                             IsRunning = false;
+                                                             mgr.StopServer();
+                                                             AllPlayers.Clear();
+                                                         } );
                 }
                 mgr.StartServer();
                 break;
@@ -86,9 +95,16 @@ public class GameManager : MonoBehaviour
                 {
                     m_StartGameButton.gameObject.SetActive(true);
                 }
-                if (m_DisconnectButton != null)
+
+                foreach (Button disconnectButton in m_DisconnectButtons)
                 {
-                    m_DisconnectButton.onClick.AddListener(() => mgr.StopHost());
+                    disconnectButton.onClick.AddListener(
+                                                         () =>
+                                                         {
+                                                             IsRunning = false;
+                                                             mgr.StopHost();
+                                                             AllPlayers.Clear();
+                                                         });
                 }
                 mgr.StartHost();
                 break;
@@ -98,9 +114,10 @@ public class GameManager : MonoBehaviour
                 {
                     m_StartGameButton.gameObject.SetActive(false);
                 }
-                if (m_DisconnectButton != null)
+
+                foreach (Button disconnectButton in m_DisconnectButtons)
                 {
-                    m_DisconnectButton.onClick.AddListener(() => mgr.StopClient());
+                    disconnectButton.onClick.AddListener(() => mgr.StopClient());
                 }
                 mgr.StartClient();
                 break;
@@ -134,7 +151,7 @@ public class GameManager : MonoBehaviour
 
     private GameObject SpawnMap()
     {
-        GameObject prefab = m_Maps.First( x => x.Name == m_Settings.MapName ).Prefab;
+        GameObject prefab = m_Maps.First( x => x.Name == m_MapName ).Prefab;
         GameObject instance = Instantiate( prefab );
         NetworkServer.Spawn( instance );
 
@@ -154,9 +171,9 @@ public class GameManager : MonoBehaviour
         IsRunning = true;
         GameObject map = SpawnMap();
 
-        if ( m_Settings.GameLogic != null )
+        if (m_GameMode != null )
         {
-            m_Settings.GameLogic.StartGame(map);
+            StartCoroutine(m_GameMode.StartGame(map));
         }
         else
         {

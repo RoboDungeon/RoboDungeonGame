@@ -10,10 +10,11 @@ using UnityEngine;
 public class TestGameMode : GameLogic
 {
 
+    public override string Name => m_ModeName;
+
+    private readonly List <NetworkPlayer> m_AlivePlayers = new List <NetworkPlayer>();
     [SerializeField]
-    private bool m_DisconnectOnDeath;
-    [SerializeField]
-    private NetworkPlayerSettings m_PlayerSettings;
+    private string m_ModeName = "TestMode";
 
     private void SpawnPlayers(MapData data)
     {
@@ -22,11 +23,11 @@ public class TestGameMode : GameLogic
 
         foreach ( KeyValuePair < NetworkConnection, NetworkPlayer > player in GameManager.AllPlayers )
         {
-            player.Value.RpcSetTeamID(team);
-            player.Value.RpcSetSettings( m_PlayerSettings );
+            player.Value.SetTeamID(team);
+            player.Value.RpcSetSettings( PlayerSettings );
             player.Value.RpcRespawn(data.TeamData[team].SpawnPoints[0].position);
-            if(m_DisconnectOnDeath)
             player.Value.OnDeath += () => OnPlayerDead(player.Key, player.Value);
+            m_AlivePlayers.Add( player.Value );
             team++;
             if ( team >= data.TeamData.Length )
             {
@@ -35,14 +36,39 @@ public class TestGameMode : GameLogic
         }
     }
 
-    private void OnPlayerDead(NetworkConnection c, NetworkPlayer p)
+    private void EnablePlayerActions( bool enable )
     {
-       NetworkServer.Destroy( p.gameObject );
+        foreach ( KeyValuePair < NetworkConnection, NetworkPlayer > player in GameManager.AllPlayers )
+        {
+            player.Value.RpcEnableActions( enable );
+        }
     }
 
-    public override void StartGame( GameObject map )
+    private void OnPlayerDead(NetworkConnection c, NetworkPlayer p)
     {
-        SpawnPlayers( map.GetComponent < MapData >() );
+        NetworkServer.Destroy( p.gameObject );
+
+        if ( PlayerEliminatedUI.Instance != null )
+            PlayerEliminatedUI.Instance.TargetDisplay( p.netIdentity.connectionToClient );
+
+        m_AlivePlayers.Remove( p );
+
+        if ( m_AlivePlayers.Count == 1 && PlayerWinUI.Instance != null)
+        {
+            PlayerWinUI.Instance.TargetDisplay(m_AlivePlayers[0].netIdentity.connectionToClient);
+        }
+    }
+
+    public override IEnumerator StartGame( GameObject map )
+    {
+        m_AlivePlayers.Clear();
+        if (GameStartCountdownUI.Instance != null)
+            GameStartCountdownUI.Instance.RpcStartGameCountdown(PlayerSettings.GameStartCountdown);
+
+        SpawnPlayers(map.GetComponent<MapData>());
+        yield return new WaitForSeconds(PlayerSettings.GameStartCountdown);
+
+        EnablePlayerActions( true );
 
     }
 

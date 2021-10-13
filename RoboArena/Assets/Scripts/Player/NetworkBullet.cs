@@ -66,6 +66,11 @@ public class NetworkBullet : NetworkBehaviour
 
     private void OnCollisionEnter( Collision col )
     {
+
+        if (!isServer)
+        {
+            return;
+        }
         if ( col.collider.transform.gameObject.layer == m_WallCollisionLayer )
         {
             if ( m_CurrentBounces != 0 )
@@ -75,17 +80,12 @@ public class NetworkBullet : NetworkBehaviour
             }
             else if ( OnDestroy == null )
             {
-                Destroy( gameObject );
+                NetworkServer.Destroy( gameObject );
             }
             else
             {
                 OnDestroy.Invoke();
             }
-        }
-
-        if ( !isServer )
-        {
-            return;
         }
 
         if ( col.collider.transform.gameObject.layer == m_PlayerCollisionLayer &&
@@ -107,7 +107,7 @@ public class NetworkBullet : NetworkBehaviour
                     u.TakeDamage(Damage);
                     if (OnDestroy == null)
                     {
-                        Destroy(gameObject);
+                        NetworkServer.Destroy(gameObject);
                     }
                     else
                     {
@@ -130,6 +130,10 @@ public class NetworkBullet : NetworkBehaviour
 
     private void Update()
     {
+        if (!isServer)
+        {
+            return;
+        }
         transform.position += transform.forward * Speed * Time.deltaTime;
     }
 

@@ -17,11 +17,12 @@ public class HeadlessServerHelper : MonoBehaviour
             string[] args = Environment.GetCommandLineArgs();
             string host = args[1];
             string port = args[2];
+            string playerCount = args.Length >= 4 ? args[3] : "2";
             Debug.Log($"Starting Server Mode: {host}:{port}");
 
             ArenaSceneData.Instance.SetHostName( host );
             ArenaSceneData.Instance.SetHostPort( ushort.Parse( port ) );
-            ArenaSceneData.Instance.StartGameAtPlayerCount = 2;
+            ArenaSceneData.Instance.StartGameAtPlayerCount = int.Parse(playerCount);
             ArenaSceneData.Instance.CloseIfEmpty = true;
             ArenaSceneData.Instance.StartServer();
         }

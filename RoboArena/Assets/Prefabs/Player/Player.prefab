@@ -292,6 +292,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  m_PlayerRenderer: {fileID: 8254063264011662606}
+  m_BlockingMaterial: {fileID: 2100000, guid: 15a0926304d5da14b998e0c8a57e1026, type: 2}
   m_PlayerSettings:
     m_MaxHealth: 100
     m_MoveSpeed: 2000

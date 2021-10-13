@@ -148,6 +148,7 @@ MonoBehaviour:
   syncInterval: 0.1
   m_Bounces: 3
   m_Speed: 10
+  m_Damage: 0
   m_HasMaxTravelTime: 1
   m_MaxTravelTime: 10
 --- !u!114 &2188214202290019977
@@ -164,7 +165,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  clientAuthority: 1
+  clientAuthority: 0
   sendInterval: 0.016
   syncPosition: 1
   syncRotation: 1

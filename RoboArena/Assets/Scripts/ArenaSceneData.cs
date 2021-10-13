@@ -10,6 +10,11 @@ public class ArenaSceneData : Singleton <ArenaSceneData>
     private int m_StartGameAtPlayerCount = -1;
 
     [SerializeField]
+    private string m_MapName;
+    [SerializeField]
+    private GameLogic m_GameMode;
+
+    [SerializeField]
     private bool m_CloseIfEmpty;
     [SerializeField]
     private string m_HostName;
@@ -76,6 +81,18 @@ public class ArenaSceneData : Singleton <ArenaSceneData>
     {
         get => m_CloseIfEmpty;
         set => m_CloseIfEmpty = value;
+    }
+
+    public string MapName
+    {
+        get => m_MapName;
+        set => m_MapName = value;
+    }
+
+    public GameLogic GameMode
+    {
+        get => m_GameMode;
+        set => m_GameMode = value;
     }
 
 }
