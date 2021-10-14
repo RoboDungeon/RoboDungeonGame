@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class NetworkPlayer : NetworkBehaviour
 {
+    public static NetworkPlayer LocalPlayer { get; private set; }
     public bool IsBlocking { get; set; }
     public bool EnableActions { get; set; }
 
@@ -16,6 +17,8 @@ public class NetworkPlayer : NetworkBehaviour
     [SerializeField]
     private Material m_BlockingMaterial;
     private Material m_OriginalMaterial;
+    private Color m_TeamColor;
+    private Color m_TeamBulletColor;
 
 
     private bool m_CanBlock = true;
@@ -23,7 +26,7 @@ public class NetworkPlayer : NetworkBehaviour
     private NetworkPlayerSettings m_PlayerSettings;
 
     [SerializeField]
-    private NetworkPlayerController m_Controller;
+    private PlayerController m_Controller;
 
     [SerializeField]
     private Transform m_ModelForwardTip;
@@ -40,6 +43,8 @@ public class NetworkPlayer : NetworkBehaviour
     public event Action OnDeath;
 
     public event Action OnHPChange;
+
+    public event Action < Vector3 > OnRespawn;
     
 
     public int TeamID
@@ -56,16 +61,22 @@ public class NetworkPlayer : NetworkBehaviour
 
     public int Health => m_Health;
 
+    public Color TeamBulletColor => m_TeamBulletColor;
+
+    public Color TeamColor => m_TeamColor;
+
     #region Public
 
-    private void Start()
+    private void Awake()
     {
-        m_OriginalMaterial = m_PlayerRenderer.material;
+        m_OriginalMaterial = Instantiate(m_PlayerRenderer.material);
+        m_PlayerRenderer.material = m_OriginalMaterial;
+        m_Controller.Player = this;
     }
     public override void OnStartLocalPlayer()
     {
         m_Controller.enabled = true;
-        m_Controller.Player = this;
+        LocalPlayer = this;
         base.OnStartLocalPlayer();
     }
 
@@ -81,8 +92,13 @@ public class NetworkPlayer : NetworkBehaviour
         m_Health = m_PlayerSettings.MaxHealth;
         OnHPChange?.Invoke();
     }
+    public void SetEnableActions(bool enable)
+    {
+        EnableActions = enable;
+        RpcEnableActions( enable );
+    }
     [ClientRpc]
-    public void RpcEnableActions(bool enable)
+    private void RpcEnableActions(bool enable)
     {
         EnableActions = enable;
     }
@@ -93,18 +109,23 @@ public class NetworkPlayer : NetworkBehaviour
         if ( !netIdentity.isServer && netIdentity.connectionToServer!=null )
         {
             Debug.Log( "Adding Player to List over RPC Call" );
-            GameManager.AllPlayers.Add(netIdentity.connectionToServer, this);
+            GameManager.AllPlayers.Add( this, netIdentity.connectionToServer);
         }
     }
     [ClientRpc]
-    public void RpcRespawn( Vector3 spawn )
+    private void RpcRespawn(Vector3 spawn)
     {
         transform.position = spawn;
+        OnRespawn?.Invoke(spawn);
     }
-    
+    public void Respawn(Vector3 spawn)
+    {
+        transform.position = spawn;
+        OnRespawn?.Invoke(spawn);
+        RpcRespawn( spawn );
+    }
 
-    [ClientRpc]
-    public void RpcSetSettings(
+    public void SetSettings(
         int maxHp,
         float moveSpeed,
         float weaponCooldown,
@@ -115,7 +136,56 @@ public class NetworkPlayer : NetworkBehaviour
         float bulletMaxTravelTime,
         float blockingCooldown,
         float blockingTime,
-        int gameStartCountdown)
+        int gameStartCountdown,
+        Color teamColor,
+        Color teamBulletColor )
+    {
+        InnerSetSettings(
+                         maxHp,
+                         moveSpeed,
+                         weaponCooldown,
+                         bulletDamage,
+                         bulletBounces,
+                         bulletSpeed,
+                         bulletHasMaxTravelTime,
+                         bulletMaxTravelTime,
+                         blockingCooldown,
+                         blockingTime,
+                         gameStartCountdown,
+                         teamColor,
+                         teamBulletColor
+                        );
+        RpcSetSettings(
+                         maxHp,
+                         moveSpeed,
+                         weaponCooldown,
+                         bulletDamage,
+                         bulletBounces,
+                         bulletSpeed,
+                         bulletHasMaxTravelTime,
+                         bulletMaxTravelTime,
+                         blockingCooldown,
+                         blockingTime,
+                         gameStartCountdown,
+                         teamColor,
+                         teamBulletColor
+                        );
+    }
+
+    private void InnerSetSettings(
+        int maxHp,
+        float moveSpeed,
+        float weaponCooldown,
+        int bulletDamage,
+        int bulletBounces,
+        float bulletSpeed,
+        bool bulletHasMaxTravelTime,
+        float bulletMaxTravelTime,
+        float blockingCooldown,
+        float blockingTime,
+        int gameStartCountdown,
+        Color teamColor,
+        Color teamBulletColor )
     {
         m_PlayerSettings.MaxHealth = maxHp;
         m_PlayerSettings.WeaponCooldown = weaponCooldown;
@@ -128,8 +198,44 @@ public class NetworkPlayer : NetworkBehaviour
         m_PlayerSettings.BlockingCooldown = blockingCooldown;
         m_PlayerSettings.BlockingTime = blockingTime;
         m_PlayerSettings.GameStartCountdown = gameStartCountdown;
+        m_TeamColor = teamColor;
+        m_TeamBulletColor = teamBulletColor;
+        m_OriginalMaterial.color = TeamColor;
         m_Health = maxHp;
         OnHPChange?.Invoke();
+    }
+
+    [ClientRpc]
+    private void RpcSetSettings(
+        int maxHp,
+        float moveSpeed,
+        float weaponCooldown,
+        int bulletDamage,
+        int bulletBounces,
+        float bulletSpeed,
+        bool bulletHasMaxTravelTime,
+        float bulletMaxTravelTime,
+        float blockingCooldown,
+        float blockingTime,
+        int gameStartCountdown,
+        Color teamColor,
+        Color teamBulletColor)
+    {
+        InnerSetSettings(
+                         maxHp,
+                         moveSpeed,
+                         weaponCooldown,
+                         bulletDamage,
+                         bulletBounces,
+                         bulletSpeed,
+                         bulletHasMaxTravelTime,
+                         bulletMaxTravelTime,
+                         blockingCooldown,
+                         blockingTime,
+                         gameStartCountdown,
+                         teamColor,
+                         teamBulletColor
+                        );
     }
 
     [ClientRpc]
@@ -170,25 +276,35 @@ public class NetworkPlayer : NetworkBehaviour
 
     public void Shoot()
     {
+        if(NetworkClient.active)
         CmdShoot( m_ModelForwardTip.position, m_ModelForwardTip.rotation );
+        else
+        {
+            InnerShoot( m_ModelForwardTip.position, m_ModelForwardTip.rotation );
+        }
     }
 
     #endregion
 
     #region Private
 
-    [Command]
-    private void CmdShoot( Vector3 position, Quaternion rotation )
+    private void InnerShoot(Vector3 position, Quaternion rotation)
     {
-        GameObject o = Instantiate( m_BulletPrefab, position, rotation );
-        NetworkServer.Spawn( o );
-        NetworkBullet bullet = o.GetComponent < NetworkBullet >();
+        GameObject o = Instantiate(m_BulletPrefab, position, rotation);
+        NetworkServer.Spawn(o);
+        NetworkBullet bullet = o.GetComponent<NetworkBullet>();
         bullet.Owner = gameObject;
         bullet.Damage = m_PlayerSettings.BulletDamage;
         bullet.Bounces = m_PlayerSettings.BulletBounces;
         bullet.Speed = m_PlayerSettings.BulletSpeed;
         bullet.HasMaxTravelTime = m_PlayerSettings.BulletHasMaxTravelTime;
         bullet.MaxTravelTime = m_PlayerSettings.BulletMaxTravelTime;
+        bullet.SetColor(TeamBulletColor);
+    }
+    [Command]
+    private void CmdShoot( Vector3 position, Quaternion rotation )
+    {
+        InnerShoot( position, rotation );
     }
 
     public void Block()

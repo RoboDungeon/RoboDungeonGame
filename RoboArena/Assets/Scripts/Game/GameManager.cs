@@ -13,8 +13,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RoboArenaNetworkManager))]
 public class GameManager : MonoBehaviour
 {
-
-    public static Dictionary <NetworkConnection, NetworkPlayer > AllPlayers { get; } = new Dictionary<NetworkConnection, NetworkPlayer>();
+    public static Dictionary <NetworkPlayer, NetworkConnection> AllPlayers { get; } = new Dictionary<NetworkPlayer, NetworkConnection>();
 
     [Header("Debug UI")]
     [SerializeField]
@@ -130,7 +129,15 @@ public class GameManager : MonoBehaviour
     private void OnClientDisconnected( NetworkConnection obj )
     {
         Debug.Log( "Disconnected Player: " + obj);
-        AllPlayers.Remove( obj );
+
+        NetworkPlayer p = null;
+        foreach ( KeyValuePair < NetworkPlayer, NetworkConnection > networkConnection in AllPlayers )
+        {
+            if ( networkConnection.Value == obj )
+                p = networkConnection.Key;
+        }
+        if(p != null)
+            AllPlayers.Remove( p );
 
         if ( CloseIfEmpty && AllPlayers.Count==0)
         {
@@ -141,7 +148,7 @@ public class GameManager : MonoBehaviour
     private void OnClientConnected( NetworkConnection obj, GameObject o )
     {
         Debug.Log( "Add Player: " + o );
-        AllPlayers[obj] = o.GetComponent<NetworkPlayer>();
+        AllPlayers[o.GetComponent<NetworkPlayer>()] = obj;
 
         if ( StartGameAtPlayerCount != -1 && StartGameAtPlayerCount <= AllPlayers.Count )
         {

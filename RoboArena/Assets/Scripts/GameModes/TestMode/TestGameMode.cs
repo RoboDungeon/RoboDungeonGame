@@ -21,13 +21,13 @@ public class TestGameMode : GameLogic
 
         int team = 0;
 
-        foreach ( KeyValuePair < NetworkConnection, NetworkPlayer > player in GameManager.AllPlayers )
+        foreach ( KeyValuePair < NetworkPlayer, NetworkConnection> player in GameManager.AllPlayers )
         {
-            player.Value.SetTeamID(team);
-            player.Value.RpcSetSettings( PlayerSettings );
-            player.Value.RpcRespawn(data.TeamData[team].SpawnPoints[0].position);
-            player.Value.OnDeath += () => OnPlayerDead(player.Key, player.Value);
-            m_AlivePlayers.Add( player.Value );
+            player.Key.SetTeamID(team);
+            player.Key.SetSettings( PlayerSettings, data.TeamData[team]);
+            player.Key.Respawn(data.TeamData[team].SpawnPoints[0].position);
+            player.Key.OnDeath += () => OnPlayerDead(player.Value, player.Key);
+            m_AlivePlayers.Add( player.Key);
             team++;
             if ( team >= data.TeamData.Length )
             {
@@ -38,9 +38,9 @@ public class TestGameMode : GameLogic
 
     private void EnablePlayerActions( bool enable )
     {
-        foreach ( KeyValuePair < NetworkConnection, NetworkPlayer > player in GameManager.AllPlayers )
+        foreach ( KeyValuePair <NetworkPlayer, NetworkConnection> player in GameManager.AllPlayers )
         {
-            player.Value.RpcEnableActions( enable );
+            player.Key.SetEnableActions( enable );
         }
     }
 

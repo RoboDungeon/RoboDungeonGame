@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapData : MonoBehaviour
+public class MapData : Singleton <MapData>
 {
 
     [SerializeField]

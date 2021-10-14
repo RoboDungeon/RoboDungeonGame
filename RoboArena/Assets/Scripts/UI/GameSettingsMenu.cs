@@ -55,7 +55,6 @@ namespace Assets.Scripts.UI
 
         public void SetMapData(int m)
         {
-            m_CurrentMode = m;
             m_MapDropdown.captionText.text = m_Maps[m];
             PopulateModeSettings();
         }
@@ -87,6 +86,7 @@ namespace Assets.Scripts.UI
             CurrentMode.PlayerSettings.BulletMaxTravelTime = float.Parse(m_BulletMaxTime.text);
             ArenaSceneData.Instance.StartGameAtPlayerCount = int.Parse(m_PlayerCount.text);
             ArenaSceneData.Instance.MapName = m_Maps[m_MapDropdown.value];
+            ArenaSceneData.Instance.GameMode = m_Modes[m_CurrentMode];
         }
 
         private void PopulateDropdowns()

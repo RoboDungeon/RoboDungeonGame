@@ -3,12 +3,11 @@ using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class NetworkPlayerController : MonoBehaviour
+public class NetworkPlayerController : PlayerController
 {
 
     private float m_CurrentWeaponCooldown;
     private float m_CurrentBlockingCooldown;
-    public NetworkPlayer Player { get; set; }
     [SerializeField]
     private LayerMask m_GroundLayer;
     [SerializeField]

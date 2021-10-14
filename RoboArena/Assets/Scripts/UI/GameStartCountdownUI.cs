@@ -41,7 +41,7 @@ public class GameStartCountdownUI : NetworkBehaviour
     private IEnumerator CountdownRoutine(int cd)
     {
         m_Group.alpha = 1;
-        for ( int i = cd; i >= 0; i-- )
+        for ( int i = cd-1; i >= 0; i-- )
         {
             yield return new WaitForSeconds(1);
 

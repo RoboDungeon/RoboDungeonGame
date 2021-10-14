@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5accfec9ca7e87440843e7d274b76ea7, type: 3}
+  m_Name: TestPVEGameMode
+  m_EditorClassIdentifier: 
+  m_PlayerSettings:
+    m_MaxHealth: 100
+    m_MoveSpeed: 2000
+    m_BlockingTime: 0.2
+    m_BlockingCooldown: 2
+    m_WeaponCooldown: 0.4
+    m_BulletBounces: 3
+    m_BulletDamage: 5
+    m_BulletSpeed: 15
+    m_BulletHasMaxTravelTime: 1
+    m_BulletMaxTravelTime: 10
+    m_GameStartCountdown: 10
+  m_ModeName: TestPVEMode
+  m_AIPlayers: 1
+  m_AIPlayerPrefab: {fileID: 8179110123916134715, guid: 5342d4dff3bee1845be36017dcedaae2, type: 3}

@@ -29,7 +29,7 @@ public class NetworkBullet : NetworkBehaviour
     private int m_PlayerCollisionLayer;
 
     private Rigidbody m_Rigidbody;
-
+    private Renderer m_Renderer;
     public GameObject Owner { get; set; }
 
     public int Damage
@@ -60,6 +60,17 @@ public class NetworkBullet : NetworkBehaviour
     {
         get => m_MaxTravelTime;
         set => m_MaxTravelTime = value;
+    }
+
+    public void SetColor(Color c)
+    {
+        m_Renderer.material.color = c;
+        RpcSetColor( c );
+    }
+    [ClientRpc]
+    private void RpcSetColor( Color c )
+    {
+        m_Renderer.material.color = c;
     }
 
     #region Unity Event Functions
@@ -100,6 +111,8 @@ public class NetworkBullet : NetworkBehaviour
 
                 if ( u.IsBlocking )
                 {
+                    SetColor( u.TeamBulletColor );
+                    Owner = u.gameObject;
                     ReflectProjectile(col.contacts[0].normal);
                 }
                 else
@@ -120,6 +133,10 @@ public class NetworkBullet : NetworkBehaviour
 
     public event Action OnDestroy;
 
+    private void Awake()
+    {
+        m_Renderer = GetComponent<Renderer>();
+    }
     private void Start()
     {
         ResetData();

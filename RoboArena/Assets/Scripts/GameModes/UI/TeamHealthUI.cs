@@ -39,9 +39,9 @@ public class TeamHealthUI : NetworkBehaviour
         int current = 0;
         int max = 0;
         Slider s = m_Sliders[team];
-        foreach ( KeyValuePair < NetworkConnection, NetworkPlayer > networkPlayer in GameManager.AllPlayers )
+        foreach ( KeyValuePair <NetworkPlayer, NetworkConnection> networkPlayer in GameManager.AllPlayers )
         {
-            NetworkPlayer p = networkPlayer.Value;
+            NetworkPlayer p = networkPlayer.Key;
 
             if ( p.TeamID == team )
             {

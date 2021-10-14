@@ -1,9 +1,9 @@
 public static class NetworkPlayerExtensions
 {
 
-    public static void RpcSetSettings( this NetworkPlayer player, NetworkPlayerSettings settings )
+    public static void SetSettings( this NetworkPlayer player, NetworkPlayerSettings settings, TeamData data )
     {
-        player.RpcSetSettings(
+        player.SetSettings(
                               settings.MaxHealth,
                               settings.MoveSpeed,
                               settings.WeaponCooldown,
@@ -14,7 +14,9 @@ public static class NetworkPlayerExtensions
                               settings.BulletMaxTravelTime,
                               settings.BlockingCooldown,
                               settings.BlockingTime,
-                              settings.GameStartCountdown
+                              settings.GameStartCountdown,
+                              data.TeamColor,
+                              data.TeamBulletColor
                              );
     }
 
