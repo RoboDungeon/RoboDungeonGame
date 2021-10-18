@@ -35,7 +35,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
         else
         {
             DestroyThis(false);
-            throw new Exception("Duplicate Singleton");
+            throw new Exception($"Duplicate Singleton for '{GetType()}'");
         }
     }
 

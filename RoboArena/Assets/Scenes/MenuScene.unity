@@ -846,6 +846,82 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 331591717}
   m_CullTransparentMesh: 1
+--- !u!1 &331682333
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 331682334}
+  - component: {fileID: 331682336}
+  - component: {fileID: 331682335}
+  m_Layer: 5
+  m_Name: ReconnectScreen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &331682334
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331682333}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 2120639941}
+  m_Father: {fileID: 678470318}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &331682335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331682333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &331682336
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331682333}
+  m_CullTransparentMesh: 1
 --- !u!1 &386080196
 GameObject:
   m_ObjectHideFlags: 0
@@ -3206,6 +3282,7 @@ RectTransform:
   - {fileID: 836786087}
   - {fileID: 1240772816}
   - {fileID: 1274243137}
+  - {fileID: 331682334}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4309,10 +4386,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ada1bd1bdc9f28b4caf92676b36b1c32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_StartGameAtPlayerCount: -1
-  m_MapName: Map01
-  m_GameMode: {fileID: 11400000, guid: 1de1d18942f188841b19605f0643f93b, type: 2}
-  m_CloseIfEmpty: 0
+  m_MatchData:
+    MatchData:
+    - Map: Map_01
+      GameMode: TestMode_0
+      MinPlayers: 2
+      Settings:
+        m_MaxHealth: 100
+        m_MoveSpeed: 2000
+        m_BlockingTime: 0.2
+        m_BlockingCooldown: 2
+        m_WeaponCooldown: 0.4
+        m_BulletBounces: 3
+        m_BulletDamage: 5
+        m_BulletSpeed: 15
+        m_BulletHasMaxTravelTime: 1
+        m_BulletMaxTravelTime: 10
+        m_GameStartCountdown: 10
+        m_MinPlayers: 10
+  m_CurrentMatch: 0
   m_HostName: localhost
   m_HostPort: 1337
   m_ConnectionType: 2
@@ -4566,7 +4658,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Make Server
+  m_Text: Join Public Server
 --- !u!222 &900222854
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8771,6 +8863,7 @@ GameObject:
   - component: {fileID: 1608738671}
   - component: {fileID: 1608738672}
   - component: {fileID: 1608738673}
+  - component: {fileID: 1608738674}
   m_Layer: 0
   m_Name: HeadlessHelper
   m_TagString: Untagged
@@ -8804,6 +8897,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d407c4dbc14f21c419bd1f9f9587724d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ServerData:
+    MatchData:
+    - Map: Map_01
+      GameMode: TestMode_0
+      MinPlayers: 2
+      Settings:
+        m_MaxHealth: 100
+        m_MoveSpeed: 2000
+        m_BlockingTime: 0.2
+        m_BlockingCooldown: 2
+        m_WeaponCooldown: 0.4
+        m_BulletBounces: 3
+        m_BulletDamage: 5
+        m_BulletSpeed: 15
+        m_BulletHasMaxTravelTime: 1
+        m_BulletMaxTravelTime: 10
+        m_GameStartCountdown: 10
+        m_MinPlayers: 10
+  m_SerializeMapData: 1
 --- !u!114 &1608738673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8820,6 +8932,20 @@ MonoBehaviour:
   m_Url: byt3.dev
   m_Port: 6969
   m_Key: AM8ELEYa4KtSAJav
+--- !u!114 &1608738674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608738670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de66a5ab1f84c284d816ab42c846e2ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Url: 213.109.162.193
+  m_Port: 1337
 --- !u!1 &1635677230
 GameObject:
   m_ObjectHideFlags: 0
@@ -11234,9 +11360,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1608738673}
-        m_TargetAssemblyTypeName: SimpleServerMakerClient, Assembly-CSharp
-        m_MethodName: RequestServer
+      - m_Target: {fileID: 1608738674}
+        m_TargetAssemblyTypeName: ServerAutoJoin, Assembly-CSharp
+        m_MethodName: Connect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11719,6 +11845,85 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2076895022}
+  m_CullTransparentMesh: 1
+--- !u!1 &2120639940
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2120639941}
+  - component: {fileID: 2120639943}
+  - component: {fileID: 2120639942}
+  m_Layer: 5
+  m_Name: Reconnect Message
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2120639941
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2120639940}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 331682334}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 160, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2120639942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2120639940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 1
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Reconnecting
+--- !u!222 &2120639943
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2120639940}
   m_CullTransparentMesh: 1
 --- !u!1 &2121489646
 GameObject:

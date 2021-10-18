@@ -19,5 +19,10 @@ public class PlayerWinUI : NetworkBehaviour
     {
         m_EliminatedUI.SetActive(true);
     }
+    [ClientRpc]
+    public void RpcHide()
+    {
+        m_EliminatedUI.SetActive(false);
+    }
 
 }

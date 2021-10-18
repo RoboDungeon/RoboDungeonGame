@@ -61,7 +61,6 @@ namespace Assets.Scripts.UI
 
         private void PopulateModeSettings()
         {
-            m_PlayerCount.text = ArenaSceneData.Instance.StartGameAtPlayerCount.ToString();
             m_PlayerHealth.text = CurrentMode.PlayerSettings.MaxHealth.ToString();
             m_MoveSpeed.text = CurrentMode.PlayerSettings.MoveSpeed.ToString();
             m_BlockingTime.text = CurrentMode.PlayerSettings.BlockingTime.ToString();
@@ -84,9 +83,9 @@ namespace Assets.Scripts.UI
             CurrentMode.PlayerSettings.BulletDamage = int.Parse(m_BulletDamage.text);
             CurrentMode.PlayerSettings.BulletSpeed = float.Parse(m_BulletSpeed.text);
             CurrentMode.PlayerSettings.BulletMaxTravelTime = float.Parse(m_BulletMaxTime.text);
-            ArenaSceneData.Instance.StartGameAtPlayerCount = int.Parse(m_PlayerCount.text);
-            ArenaSceneData.Instance.MapName = m_Maps[m_MapDropdown.value];
-            ArenaSceneData.Instance.GameMode = m_Modes[m_CurrentMode];
+            ArenaSceneData.Instance.CurrentData.MinPlayers = int.Parse(m_PlayerCount.text);
+            ArenaSceneData.Instance.CurrentData.Map = m_Maps[m_MapDropdown.value];
+            ArenaSceneData.Instance.CurrentData.GameMode = m_Modes[m_CurrentMode].Name;
         }
 
         private void PopulateDropdowns()

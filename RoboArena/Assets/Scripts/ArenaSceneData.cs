@@ -7,15 +7,9 @@ public class ArenaSceneData : Singleton <ArenaSceneData>
 {
 
     [SerializeField]
-    private int m_StartGameAtPlayerCount = -1;
-
+    private ServerMatchListData m_MatchData;
     [SerializeField]
-    private string m_MapName;
-    [SerializeField]
-    private GameLogic m_GameMode;
-
-    [SerializeField]
-    private bool m_CloseIfEmpty;
+    private int m_CurrentMatch = 0;
     [SerializeField]
     private string m_HostName;
     [SerializeField]
@@ -38,6 +32,13 @@ public class ArenaSceneData : Singleton <ArenaSceneData>
     public void SetHostPort(ushort port) => m_HostPort = port;
     public void SetHostPort(string port) => m_HostPort = ushort.Parse(port);
 
+    public void MoveNextMatch()
+    {
+        m_CurrentMatch++;
+
+        if ( CurrentData == null )
+            m_CurrentMatch = 0;
+    }
     public void StartClient()
     {
         m_ConnectionType = ArenaSceneConnectionType.Client;
@@ -53,6 +54,9 @@ public class ArenaSceneData : Singleton <ArenaSceneData>
         m_ConnectionType = ArenaSceneConnectionType.Server;
         SceneManager.LoadScene("ArenaScene");
     }
+
+    public ServerMatchData CurrentData =>
+        m_MatchData.MatchData.Length > m_CurrentMatch ? m_MatchData.MatchData[m_CurrentMatch] : null;
 
     public string HostName
     {
@@ -71,28 +75,16 @@ public class ArenaSceneData : Singleton <ArenaSceneData>
         set => m_ConnectionType = value;
     }
 
-    public int StartGameAtPlayerCount
+    public ServerMatchListData MatchData
     {
-        get => m_StartGameAtPlayerCount;
-        set => m_StartGameAtPlayerCount = value;
+        get => m_MatchData;
+        set => m_MatchData = value;
     }
 
-    public bool CloseIfEmpty
+    public int CurrentMatch
     {
-        get => m_CloseIfEmpty;
-        set => m_CloseIfEmpty = value;
-    }
-
-    public string MapName
-    {
-        get => m_MapName;
-        set => m_MapName = value;
-    }
-
-    public GameLogic GameMode
-    {
-        get => m_GameMode;
-        set => m_GameMode = value;
+        get => m_CurrentMatch;
+        set => m_CurrentMatch = value;
     }
 
 }

@@ -14,7 +14,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static Dictionary <NetworkPlayer, NetworkConnection> AllPlayers { get; } = new Dictionary<NetworkPlayer, NetworkConnection>();
-
+    public static GameManager Instance { get; private set; }
     [Header("Debug UI")]
     [SerializeField]
     private Text m_ServerDebugInfo;
@@ -23,45 +23,25 @@ public class GameManager : MonoBehaviour
     private Button m_StartGameButton;
     [SerializeField]
     private Button[] m_DisconnectButtons;
-
     [SerializeField]
-    private int m_StartGameAtPlayerCount = -1;
-    [SerializeField]
-    private bool m_CloseIfEmpty;
+    private GameLogic[] m_GameModes;
 
     public bool IsRunning { get; private set; }
-    [SerializeField]
-    private string m_MapName;
-    [SerializeField]
-    private GameLogic m_GameMode;
 
     [SerializeField]
     private GameManagerMapData[] m_Maps;
 
+    private GameObject m_CurrentMap = null;
 
-    public int StartGameAtPlayerCount
-    {
-        get => m_StartGameAtPlayerCount;
-        set => m_StartGameAtPlayerCount = value;
-    }
-
-    public bool CloseIfEmpty
-    {
-        get => m_CloseIfEmpty;
-        set => m_CloseIfEmpty = value;
-    }
 
     private void Start()
     {
-        m_GameMode = ArenaSceneData.Instance.GameMode;
-        m_CloseIfEmpty = ArenaSceneData.Instance.CloseIfEmpty;
-        m_StartGameAtPlayerCount = ArenaSceneData.Instance.StartGameAtPlayerCount;
+        Instance = this;
         RoboArenaNetworkManager mgr = GetComponent < RoboArenaNetworkManager >();
         mgr.OnAddServerPlayer+= OnClientConnected;
         mgr.OnDisconnectServer+= OnClientDisconnected;
         mgr.networkAddress = ArenaSceneData.Instance.HostName;
         mgr.Transport.Port = ArenaSceneData.Instance.HostPort;
-        m_MapName = ArenaSceneData.Instance.MapName;
 
         if ( m_ServerDebugInfo != null )
         {
@@ -139,10 +119,7 @@ public class GameManager : MonoBehaviour
         if(p != null)
             AllPlayers.Remove( p );
 
-        if ( CloseIfEmpty && AllPlayers.Count==0)
-        {
-            Application.Quit();
-        }
+        
     }
 
     private void OnClientConnected( NetworkConnection obj, GameObject o )
@@ -150,7 +127,7 @@ public class GameManager : MonoBehaviour
         Debug.Log( "Add Player: " + o );
         AllPlayers[o.GetComponent<NetworkPlayer>()] = obj;
 
-        if ( StartGameAtPlayerCount != -1 && StartGameAtPlayerCount <= AllPlayers.Count )
+        if ( ArenaSceneData.Instance.CurrentData.MinPlayers <= AllPlayers.Count )
         {
             StartGame();
         }
@@ -158,11 +135,42 @@ public class GameManager : MonoBehaviour
 
     private GameObject SpawnMap()
     {
-        GameObject prefab = m_Maps.First( x => x.Name == m_MapName ).Prefab;
+        GameObject prefab = m_Maps.First( x => x.Name == ArenaSceneData.Instance.CurrentData.Map).Prefab;
         GameObject instance = Instantiate( prefab );
         NetworkServer.Spawn( instance );
 
         return instance;
+    }
+
+    [Server]
+    public void EndGame()
+    {
+        if ( !IsRunning )
+        {
+            Debug.LogError("No Game logic running.");
+        }
+
+        if ( m_CurrentMap != null )
+        {
+            NetworkServer.Destroy( m_CurrentMap );
+        }
+        IsRunning = false;
+
+        ArenaSceneData.Instance.MoveNextMatch();
+
+        if (PlayerEliminatedUI.Instance != null)
+            PlayerEliminatedUI.Instance.RpcHide();
+        if (PlayerWinUI.Instance != null)
+            PlayerWinUI.Instance.RpcHide();
+
+        if ( ArenaSceneData.Instance.CurrentData != null )
+        {
+            StartCoroutine( StartGameDelayed() );
+        }
+        else
+        {
+            StartCoroutine(QuitDelayed());
+        }
     }
 
     [Server]
@@ -177,10 +185,11 @@ public class GameManager : MonoBehaviour
 
         IsRunning = true;
         GameObject map = SpawnMap();
-
-        if (m_GameMode != null )
+        GameLogic mode = m_GameModes.FirstOrDefault( x => x.Name == ArenaSceneData.Instance.CurrentData.GameMode );
+        m_CurrentMap = map;
+        if (mode != null )
         {
-            StartCoroutine(m_GameMode.StartGame(map));
+            StartCoroutine(mode.StartGame(map));
         }
         else
         {
@@ -188,4 +197,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+    private IEnumerator QuitDelayed()
+    {
+        yield return new WaitForSeconds(10);
+
+        Application.Quit();
+    }
+
+    private IEnumerator StartGameDelayed()
+    {
+        yield return new WaitForSeconds( 10 );
+
+        StartGame();
+    }
 }

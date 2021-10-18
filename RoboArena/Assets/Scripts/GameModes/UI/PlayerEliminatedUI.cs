@@ -16,9 +16,14 @@ public class PlayerEliminatedUI: NetworkBehaviour
         Instance = this;
     }
     [TargetRpc]
-    public void TargetDisplay( NetworkConnection c )
+    public void TargetDisplay(NetworkConnection c)
     {
-        m_EliminatedUI.SetActive( true );
+        m_EliminatedUI.SetActive(true);
+    }
+    [ClientRpc]
+    public void RpcHide()
+    {
+        m_EliminatedUI.SetActive(false);
     }
 
 }

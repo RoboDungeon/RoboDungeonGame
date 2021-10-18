@@ -31,8 +31,11 @@ public class NetworkPlayerSettings
     [SerializeField]
     private float m_BulletMaxTravelTime = 10;
 
+    [Header("Game Settings")]
     [SerializeField]
     private int m_GameStartCountdown = 10;
+    [SerializeField]
+    private int m_MinPlayers = 10;
 
     public int GameStartCountdown
     {
@@ -98,6 +101,12 @@ public class NetworkPlayerSettings
     {
         get => m_BlockingCooldown;
         set => m_BlockingCooldown = value;
+    }
+
+    public int MinPlayers
+    {
+        get => m_MinPlayers;
+        set => m_MinPlayers = value;
     }
 
 }

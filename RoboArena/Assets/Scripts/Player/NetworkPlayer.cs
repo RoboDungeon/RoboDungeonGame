@@ -104,6 +104,19 @@ public class NetworkPlayer : NetworkBehaviour
     }
 
     [ClientRpc]
+    private void RpcDisablePlayer()
+    {
+        gameObject.SetActive(false);
+        EnableActions = false;
+    }
+    public void DisablePlayer()
+    {
+        gameObject.SetActive(false);
+        EnableActions = false;
+        RpcDisablePlayer();
+    }
+
+    [ClientRpc]
     public void RpcAddToPlayerList()
     {
         if ( !netIdentity.isServer && netIdentity.connectionToServer!=null )
@@ -187,6 +200,7 @@ public class NetworkPlayer : NetworkBehaviour
         Color teamColor,
         Color teamBulletColor )
     {
+        gameObject.SetActive(true);
         m_PlayerSettings.MaxHealth = maxHp;
         m_PlayerSettings.WeaponCooldown = weaponCooldown;
         m_PlayerSettings.MoveSpeed = moveSpeed;

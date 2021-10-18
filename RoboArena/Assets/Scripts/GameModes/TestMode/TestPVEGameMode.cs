@@ -23,6 +23,7 @@ public class TestPVEGameMode : GameLogic
     private int m_AITeam = 0;
     [SerializeField]
     private GameObject m_AIPlayerPrefab;
+    private bool m_EndGame = false;
 
     private void SpawnPlayers(MapData data)
     {
@@ -82,6 +83,14 @@ public class TestPVEGameMode : GameLogic
             {
                 PlayerWinUI.Instance.TargetDisplay(networkPlayer.netIdentity.connectionToClient);
             }
+            m_AlivePlayers.Clear();
+
+            foreach ( NetworkPlayer networkPlayer in m_AliveAIPlayers )
+            {
+                NetworkServer.Destroy( networkPlayer.gameObject );
+            }
+            m_AliveAIPlayers.Clear();
+            m_EndGame = true;
         }
 
         GameManager.AllPlayers.Remove( p );
@@ -101,6 +110,7 @@ public class TestPVEGameMode : GameLogic
 
     public override IEnumerator StartGame(GameObject map)
     {
+        m_EndGame = false;
         m_AlivePlayers.Clear();
         m_AliveAIPlayers.Clear();
         if (GameStartCountdownUI.Instance != null)
@@ -110,7 +120,12 @@ public class TestPVEGameMode : GameLogic
         yield return new WaitForSeconds(PlayerSettings.GameStartCountdown);
 
         EnablePlayerActions(true);
+        while (!m_EndGame && GameManager.AllPlayers.Count != 0)
+        {
+            yield return new WaitForSeconds(1);
+        }
 
+        GameManager.Instance.EndGame();
     }
 
 }

@@ -24,4 +24,5 @@ MonoBehaviour:
     m_BulletHasMaxTravelTime: 1
     m_BulletMaxTravelTime: 10
     m_GameStartCountdown: 10
+    m_MinPlayers: 2
   m_ModeName: TestMode_0

@@ -24,6 +24,9 @@ MonoBehaviour:
     m_BulletHasMaxTravelTime: 1
     m_BulletMaxTravelTime: 10
     m_GameStartCountdown: 10
+    m_MinPlayers: 2
   m_ModeName: TestPVEMode
   m_AIPlayers: 1
+  m_PlayerTeam: 1
+  m_AITeam: 0
   m_AIPlayerPrefab: {fileID: 8179110123916134715, guid: 5342d4dff3bee1845be36017dcedaae2, type: 3}
